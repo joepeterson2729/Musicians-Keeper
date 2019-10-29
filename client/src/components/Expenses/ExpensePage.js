@@ -212,6 +212,20 @@ const handleDelete = (categoryId,id) => {
 
                     <Grid container>
                         <Grid item xs={12}>
+                       
+    {/* <form className={classes.container} noValidate>
+      <TextField
+        id="datePicker"
+        label="Date"
+        type="date"
+        defaultValue="2017-05-24"
+        className={classes.textField}
+        InputLabelProps={{
+          shrink: true,
+        }}
+      />
+    </form>
+  ); */}
                             <TextField id={"date" + ele.id} className={classes.textField} label="Date" margin="normal" />
                             <TextField id={"name" + ele.id} className={classes.textField} label="Name" margin="normal" />
                             <TextField id={"amount" + ele.id} className={classes.textField} label="Amount" margin="normal" />
