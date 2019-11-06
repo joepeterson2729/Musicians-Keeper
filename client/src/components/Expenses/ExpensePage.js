@@ -78,7 +78,7 @@ function ControlledExpansionPanels(props) {
                 // setData({ expenses: newExpenses, date: "", purchasedLocation: "", amount: "" })
                 setData(updatedData)
                 document.querySelector("#name" + id).value = "";
-                document.querySelector("#date" + id).value = "";
+                document.querySelector("#datePicker" + id).value = "";
                 document.querySelector("#amount" + id).value = "";
             })
 
