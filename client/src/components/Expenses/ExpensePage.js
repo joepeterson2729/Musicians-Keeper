@@ -14,7 +14,7 @@ import SpanningTable from '../SpanningTable';
 import Grid from '@material-ui/core/Grid';
 import Cookie from 'js-cookie';
 import { withRouter } from "react-router-dom";
-import TextField from '@material-ui/core/TextField';
+// import TextField from '@material-ui/core/TextField';
 
 
 
@@ -59,7 +59,7 @@ function ControlledExpansionPanels(props) {
     const handleInput = (id) => {
         let newExpense = {
             name: document.querySelector("#name" + id).value,
-            date: document.querySelector("#date" + id).value,
+            date: document.querySelector("#datePicker" + id).value,
             amount: document.querySelector("#amount" + id).value,
             categoryId: id
         }
@@ -214,9 +214,9 @@ function ControlledExpansionPanels(props) {
                         <Grid container>
                             <Grid item xs={12}>
 
-                        {/* <Textfield id={"datePicker" + ele.id} className={classes.textField} label="Date" type="date" InputLabelProps={{shrink:true}} /> */}
-                          
-                                <TextField id={"date" + ele.id} className={classes.textField} label="Date" margin="normal" />
+
+
+                                <TextField id={"datePicker" + ele.id} className={classes.textField} label="Date" type="date" InputLabelProps={{ shrink: true }} />
                                 <TextField id={"name" + ele.id} className={classes.textField} label="Name" margin="normal" />
                                 <TextField id={"amount" + ele.id} className={classes.textField} label="Amount" margin="normal" />
                                 <Button variant="contained" color="black" margin="normal" onClick={() => { handleInput(ele.id) }} className={`${classes.button}` + " formButton"} />
