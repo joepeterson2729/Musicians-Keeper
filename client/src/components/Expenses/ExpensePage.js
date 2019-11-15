@@ -216,7 +216,7 @@ function ControlledExpansionPanels(props) {
 
 
 
-                                <TextField id={"datePicker" + ele.id} className={classes.textField} label="Date" type="date" InputLabelProps={{ shrink: true }} />
+                                <TextField id={"datePicker" + ele.id} className={classes.textField} label="Date" margin="normal" type="date" InputLabelProps={{ shrink: true }} />
                                 <TextField id={"name" + ele.id} className={classes.textField} label="Name" margin="normal" />
                                 <TextField id={"amount" + ele.id} className={classes.textField} label="Amount" margin="normal" />
                                 <Button variant="contained" color="black" margin="normal" onClick={() => { handleInput(ele.id) }} className={`${classes.button}` + " formButton"} />
