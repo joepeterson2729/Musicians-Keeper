@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -44,6 +44,8 @@ export default function SpanningTable(props) {
         props.addImg(id, props.categoryId);
     };
 
+    const [loading, setLoading] = useState(false);
+
     return (
         <Paper className={classes.root}>
             <Table className={classes.table}>
@@ -63,7 +65,10 @@ export default function SpanningTable(props) {
                             <TableCell align="right">{moment(row.date).format("MM/DD/YYYY")}</TableCell>
                             <TableCell align="right">{row.name}</TableCell>
                             <TableCell align="right">{ccyFormat(row.amount)}</TableCell>
-                            <TableCell align="right"> <Button onClick = {()=> {props.handleDelete(row.CategoryId,row.id)}} > <DeleteIcon /></Button></TableCell>
+                            <TableCell align="right"> <Button disabled={loading} onClick = {()=> {
+                                setLoading(true);
+                                props.handleDelete(row.CategoryId,row.id, () => {setLoading(false)});
+                            }} > <DeleteIcon /></Button></TableCell>
                         </TableRow>
                     ))}
 

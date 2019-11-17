@@ -199,14 +199,14 @@ function ControlledExpansionPanels(props) {
 
     })
     //delete element by id 
-    const handleDelete = (categoryId, id) => {
+    const handleDelete = (categoryId, id, callback) => {
         const accessString = localStorage.getItem('JWT');
         axios.delete("/api/expense/" + id, { headers: { Authorization: `${accessString}` } }).then(res => {
             let updatedData = [...data];
             let newExpenses = updatedData[categoryId - 1].Expenses.filter(ele => ele.id !== id);
             updatedData[categoryId - 1].Expenses = newExpenses;
             setData(updatedData);
-
+            callback();
         })
 
     }
