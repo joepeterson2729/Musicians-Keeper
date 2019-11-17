@@ -6,7 +6,7 @@ import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import Navbar from "../Navbar";
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { TextField, Input, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@material-ui/core';
+import { TextField, Input, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, CircularProgress } from '@material-ui/core';
 import SaveIcon from '@material-ui/icons/Save';
 import Button from '@material-ui/core/Button';
 import axios from 'axios';
@@ -14,6 +14,7 @@ import SpanningTable from '../SpanningTable';
 import Grid from '@material-ui/core/Grid';
 import Cookie from 'js-cookie';
 import { withRouter } from "react-router-dom";
+import { grey } from '@material-ui/core/colors';
 
 
 //Setting up use stylyes for design is from material UI 
@@ -34,6 +35,9 @@ const useStyles = makeStyles(theme => ({
         marginLeft: theme.spacing(1),
         marginRight: theme.spacing(1),
         width: 200,
+    },
+    center: {
+        textAlign: "center"
     }
 }));
 
@@ -46,6 +50,7 @@ function ControlledExpansionPanels(props) {
     const [openView, setOpenView] = React.useState(false);
     const [category, setCategory] = React.useState(-1);
     const [expense, setExpense] = React.useState(-1);
+    const [loading, setLoading] = React.useState([]);
 
 //Function for when it is expanded 
     const handleChange = panel => (event, isExpanded) => {
@@ -62,6 +67,9 @@ function ControlledExpansionPanels(props) {
             categoryId: id
         }  
         const accessString = localStorage.getItem('JWT');
+        let newLoading = [...loading];
+        newLoading[id - 1] = true;
+        setLoading(newLoading);
         axios.post("/api/expense",newExpense,
             { headers: { Authorization: `${accessString}` } }).then(res => {
                 let formattedData = res.data
@@ -75,6 +83,9 @@ function ControlledExpansionPanels(props) {
                 // console.log(newExpenses)
                 // setData({ expenses: newExpenses, date: "", purchasedLocation: "", amount: "" })
                 setData(updatedData)
+                newLoading = [...loading];
+                newLoading[id - 1] = false;
+                setLoading(newLoading);
                 document.querySelector("#name"+id).value = "";
                 document.querySelector("#date"+id).value = "";
                 document.querySelector("#amount"+id).value = "";
@@ -100,8 +111,13 @@ function ControlledExpansionPanels(props) {
             { headers: { Authorization: `${accessString}` } }).then(res => {
                 console.log(res.data)
                 setData(res.data)
-                
+                let loadingArray = [];
 
+                res.data.forEach(element => {
+                    loadingArray.push(false);
+                });
+
+                setLoading(loadingArray);
             })
 
     }, [])
@@ -209,12 +225,12 @@ const handleDelete = (categoryId,id) => {
                 <ExpansionPanelDetails className={"customFormContainer"}>
 
                     <Grid container>
-                        <Grid item xs={12}>
-                            <TextField id={"date" + ele.id} className={classes.textField} label="Date" margin="normal" />
-                            <TextField id={"name" + ele.id} className={classes.textField} label="Name" margin="normal" />
-                            <TextField id={"amount" + ele.id} className={classes.textField} label="Amount" margin="normal" />
-                            <Button variant="contained" color="black" margin="normal" onClick={() => { handleInput(ele.id) }} className={`${classes.button}` + " formButton"} />
-                           
+                        <Grid item xs={12} className={`${classes.center}`}>
+                            <TextField id={"date" + ele.id} className={classes.textField} label="Date" />
+                            <TextField id={"name" + ele.id} className={classes.textField} label="Name"/>
+                            <TextField id={"amount" + ele.id} className={classes.textField} label="Amount" />
+                            <Button size="large" variant="contained" color="black" onClick={() => { handleInput(ele.id) }} className={`${classes.button}`} disabled={loading[idx]}>{loading[idx] ? <CircularProgress size={25} color={grey[900]}/> : "Add"}</Button>
+                            
         
                         </Grid>
                         <Grid item xs={12}>
