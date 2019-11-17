@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -77,9 +77,18 @@ function SignIn(props) {
         props.history.push("/expense");
       })
       .catch((error) => {
+        setError(true);
+        setHelperText(error.response.data.message);
       })
   }
 
+  const handleChange = (e) => {
+    setError(false);
+    setHelperText("");
+  }
+
+  const [error, setError] = useState(false);
+  const [helperText, setHelperText] = useState("");
 
   return (
 
@@ -109,6 +118,8 @@ function SignIn(props) {
               name="email"
               autoComplete="email"
               autoFocus
+              error={error}
+              onChange={handleChange}
             />
             <TextField
               variant="outlined"
@@ -120,6 +131,9 @@ function SignIn(props) {
               type="password"
               id="password"
               autoComplete="current-password"
+              error={error}
+              helperText={helperText}
+              onChange={handleChange}
             />
             <Button
               type="submit"
