@@ -74,6 +74,8 @@ module.exports = function(app) {
         dbExpense.img = false; // No image exists yet for a just created expense.
 
         res.status(201).json(dbExpense);
+      }).catch(function(err) {
+        res.status(502).json({ message: "Internal server error"});
       });
   });
 
