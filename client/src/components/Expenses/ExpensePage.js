@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
@@ -6,8 +6,8 @@ import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import Navbar from "../Navbar";
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { TextField, Input, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, CircularProgress } from '@material-ui/core';
-import SaveIcon from '@material-ui/icons/Save';
+import { TextField, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, CircularProgress } from '@material-ui/core';
+//import SaveIcon from '@material-ui/icons/Save';
 import Button from '@material-ui/core/Button';
 import axios from 'axios';
 import SpanningTable from '../SpanningTable';
@@ -15,6 +15,7 @@ import Grid from '@material-ui/core/Grid';
 import Cookie from 'js-cookie';
 import { withRouter } from "react-router-dom";
 import { grey } from '@material-ui/core/colors';
+import moment from 'moment';
 // import TextField from '@material-ui/core/TextField';
 
 
@@ -53,6 +54,7 @@ function ControlledExpansionPanels(props) {
     const [category, setCategory] = React.useState(-1);
     const [expense, setExpense] = React.useState(-1);
     const [loading, setLoading] = React.useState([]);
+    const [error, setError] = React.useState([]);
 
     //Function for when it is expanded 
     const handleChange = panel => (event, isExpanded) => {
@@ -64,7 +66,7 @@ function ControlledExpansionPanels(props) {
     const handleInput = (id) => {
         let newExpense = {
             name: document.querySelector("#name" + id).value,
-            date: document.querySelector("#datePicker" + id).value,
+            date: moment(document.querySelector("#datePicker" + id).value).format("MM/DD/YYYY"),
             amount: document.querySelector("#amount" + id).value,
             categoryId: id
         }
@@ -91,7 +93,16 @@ function ControlledExpansionPanels(props) {
                 newLoading = [...loading];
                 newLoading[id - 1] = false;
                 setLoading(newLoading);
-            })
+            }).catch(err =>{
+                newLoading = [...loading];
+                newLoading[id - 1] = false;
+                setLoading(newLoading);
+
+                let newError = [...error];
+                newError[id - 1].error = true;
+                newError[id - 1].message = "An error has occured.";
+                setError(newError);
+            });
 
     }
 
@@ -111,18 +122,22 @@ function ControlledExpansionPanels(props) {
         const accessString = localStorage.getItem('JWT');
         axios.get("/api/expense",
             { headers: { Authorization: `${accessString}` } }).then(res => {
-                console.log(res.data)
-                setData(res.data)
+                
                 let loadingArray = [];
+                let errorArray = [];
 
                 res.data.forEach(element => {
                     loadingArray.push(false);
+                    errorArray.push({ error: false, message: "" });
                 });
 
                 setLoading(loadingArray);
+                setError(errorArray);
+                setData(res.data);
             })
 
     }, [])
+    
     //adding image
     const addImg = (id, categoryId) => {
         setCategory(categoryId);
@@ -170,34 +185,6 @@ function ControlledExpansionPanels(props) {
         }
     }
 
-    const setName = ((event) => {
-        const { name, value } = event.target
-        this.setState({ [name]: value })
-    })
-
-    //onButtonSubmit = (event) => {
-    const getJWT = ((event) => {
-        event.preventDefault();
-        const accessString = localStorage.getItem('JWT');
-        axios.post("/api/expenses", {
-            date: this.state.date,
-            name: this.state.name,
-            amount: this.state.amount
-        },
-            {
-
-
-                headers: {
-                    headers: { Authorization: `JWT ${accessString}` }
-                }
-            }).then(res => {
-                console.log(res)
-                let newExpenses = this.state.expenses.concat([res.data])
-                this.setState({ expenses: newExpenses, date: "", purchasedLocation: "", amount: "" })
-            })
-
-
-    })
     //delete element by id 
     const handleDelete = (categoryId, id, callback) => {
         const accessString = localStorage.getItem('JWT');
@@ -210,6 +197,14 @@ function ControlledExpansionPanels(props) {
         })
 
     }
+
+    const handleTextChange = (id) => {
+        let newError = [...error];
+        newError[id].error = false;
+        newError[id].message = "";
+        setError(newError);
+    }
+
     return (
 
         //Expansion panel dislay 
@@ -229,9 +224,9 @@ function ControlledExpansionPanels(props) {
 
                         <Grid container>
                             <Grid item xs={12} className={`${classes.center}`}>
-                                <TextField id={"datePicker" + ele.id} className={classes.textField} label="Date"  type="date" InputLabelProps={{ shrink: true }} />
-                                <TextField id={"name" + ele.id} className={classes.textField} label="Name"  />
-                                <TextField id={"amount" + ele.id} className={classes.textField} label="Amount" />
+                                <TextField id={"datePicker" + ele.id} className={classes.textField} label="Date"  type="date" InputLabelProps={{ shrink: true }} error={error[idx].error} onChange={() => {handleTextChange(idx)}}/>
+                                <TextField id={"name" + ele.id} className={classes.textField} label="Name" error={error[idx].error} helperText={error[idx].message} onChange={() => {handleTextChange(idx)}}/>
+                                <TextField id={"amount" + ele.id} className={classes.textField} label="Amount" error={error[idx].error} onChange={() => {handleTextChange(idx)}}/>
                                 <Button size="large" variant="contained" color="black" onClick={() => { handleInput(ele.id) }} className={`${classes.button}`} disabled={loading[idx]}>{loading[idx] ? <CircularProgress size={25} color={grey[900]}/> : "Add"}</Button>
                             </Grid>
                             <Grid item xs={12}>

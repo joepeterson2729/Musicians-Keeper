@@ -10,7 +10,6 @@ import moment from 'moment';
 import DeleteIcon from '@material-ui/icons/Delete';
 import Button from '@material-ui/core/Button';
 
-const TAX_RATE = 0.07;
 
 const useStyles = makeStyles(theme => ({
     root: {
